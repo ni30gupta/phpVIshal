@@ -1,5 +1,5 @@
 <?php
-$con = mysqli_connect('localhost', 'root', 'root', '28aug');
+$con = mysqli_connect('localhost', 'root', '', '28aug');
 
 $res = mysqli_query($con, "SELECT * from vote");
 
@@ -8,8 +8,8 @@ while ($rows = mysqli_fetch_assoc($res)) {
      $id  = $rows['id'];
 ?>
 
-     <form id="vote" method="post">
-          <div id='res'></div>
+     <form method="post">
+          <div id="<?php echo $id; ?>"></div>
           <input type="button" onclick="voteSubmit(<?php echo $rows['id'] ?>, 'vote1' )" name="vote1" value="<?php echo $rows['vote1']; ?>"> (<span id="vote1_<?php echo $rows['id']; ?>"><?php echo $rows['vote1_count']; ?></span>) V/s
 
           <input type="button" onclick="voteSubmit(<?php echo $rows['id'] ?>, 'vote2' )" name="vote2" value="<?php echo $rows['vote2']; ?>"> (<span id="vote2_<?php echo $rows['id']; ?>"><?php echo $rows['vote2_count']; ?></span>)<br> <br>
@@ -29,12 +29,16 @@ while ($rows = mysqli_fetch_assoc($res)) {
                     success: function(result) {
                          v = $('#' + type + '_' + id).html();
                          v = parseInt(v) + 1;
-                         $('#' + type + '_' + id).html(v);
+                         // $('#' + type + '_' + id).html(v);
                          // console.log(result);
 
-                         $.parseJSON(result)
-                         $('#res').html(result.msg);
-                         console.log(result.msg)
+                         newRes = $.parseJSON(result)
+                         $(`#${id}`).html(newRes.msg);
+                         // console.log(newRes.vote)
+                         if (newRes.vote) {
+
+                              $(`#${type}_${id}`).html(newRes.vote)
+                         }
 
                     }
                })

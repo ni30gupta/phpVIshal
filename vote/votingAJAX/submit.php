@@ -1,5 +1,5 @@
 <?php
-$con = mysqli_connect('localhost', 'root', 'root', '28aug');
+$con = mysqli_connect('localhost', 'root', '', '28aug');
 
 $msg = "";
 $count = "";
@@ -18,8 +18,11 @@ if (isset($_COOKIE["voted$id"])) {
      setcookie("voted$id", true, time() + 8);
      $msg = "Thank you";
      $status = "success";
+     $qry = mysqli_query($con, "SELECT * FROM vote WHERE id = '$id'");
+     $countFromDB = mysqli_fetch_assoc($qry);
+     $count = $countFromDB[$type . "_count"];
 }
 
-$result = array('status' => $status, 'msg' => $msg);
+$result = array('status' => $status, 'msg' => $msg, 'vote' => $count);
 
 echo json_encode($result);
