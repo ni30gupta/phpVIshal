@@ -1,5 +1,5 @@
 <?php
-$con = mysqli_connect('localhost', 'root', '', '28aug');
+$con = mysqli_connect('localhost', 'root', 'root', '28aug');
 
 $res = mysqli_query($con, "SELECT * from vote");
 if (isset($_POST['vote'])) {
@@ -37,19 +37,20 @@ while ($rows = mysqli_fetch_assoc($res)) {
 ?>
 
      <form method="post">
-
-          <input type="submit" name="vote" value="<?php echo $rows['vote1']; ?>"> <span>(<?php echo $rows['vote1_count']; ?>)</span> <input name="id" value="<?php echo $id; ?>" hidden type="text"> V/s
-
-          <input type="submit" name="vote" value="<?php echo $rows['vote2']; ?>"> <span>(<?php echo $rows['vote2_count']; ?>)</span> <input name="id" value="<?php echo $id; ?>" hidden type="text"> <br> <br>
           <?php
-          if (isset($msg1) && $msg1 != "") {
+          if (isset($msg1) && $msg1 != "" && $rows['id'] == 1) {
                echo $msg1;
                $msg1 = "";
           }
-          if (isset($msg2) && $msg2 != "") {
+          if (isset($msg2) && $msg2 != "" && $rows['id'] == 2) {
                echo $msg2;
                $msg2 = "";
           }
           ?>
+          <br>
+          <input type="submit" name="vote" value="<?php echo $rows['vote1']; ?>"> <span>(<?php echo $rows['vote1_count']; ?>)</span> <input name="id" value="<?php echo $id; ?>" hidden type="text"> V/s
+
+          <input type="submit" name="vote" value="<?php echo $rows['vote2']; ?>"> <span>(<?php echo $rows['vote2_count']; ?>)</span> <input name="id" value="<?php echo $id; ?>" hidden type="text"> <br> <br>
+
      </form>
 <?php } ?>
