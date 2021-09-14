@@ -1,5 +1,5 @@
 <?php
-$con = mysqli_connect('localhost', 'root', '', '28aug');
+$con = mysqli_connect('localhost', 'root', 'root', '28aug');
 
 $res = mysqli_query($con, "SELECT * from vote");
 
