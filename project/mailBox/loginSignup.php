@@ -6,6 +6,10 @@ if (isset($_POST['login'])) {
 
      $res = mysqli_query($con, "SELECT * from users WHERE username='$username' and password='$password' ");
      if (mysqli_num_rows($res) > 0) {
+          $data = mysqli_fetch_assoc($res);
+          $_SESSION['username'] = $username;
+          $_SESSION['from_id'] = $data['id'];
+
           header('location:dashboard.php');
      }
 }
