@@ -5,7 +5,7 @@ if (!$_SESSION['user_id']) {
 }
 
 $from_id = $_SESSION['user_id'];
-$res = mysqli_query($con, "SELECT * from messages where to_id = '$from_id' and status ='active'");
+$res = mysqli_query($con, "SELECT * from messages where to_id = '$from_id' and status ='inactive'");
 $count = 1;
 
 ?>
@@ -34,7 +34,7 @@ $count = 1;
                <tbody>
                     <?php
                     while ($rows = mysqli_fetch_assoc($res)) {
-                         $id = $rows['id'];
+
                          setcookie('status', 'unread', time() + 20);
                          if (isset($_COOKIE['status'])) {
                               if ($_COOKIE['status']) {
@@ -50,7 +50,7 @@ $count = 1;
                          <td>" . $name . "</td>
                          <td>" . $rows['subject'] . "</td>
                          <td> <a id = '$count' class='$status' href='message.php?name= $name'> " . $rows['message'] . "</td>
-                     <td> <a href='status.php/?id=$id'>Delete </a> </td>
+                     <td> <a href='delete.php'>Delete </a> </td>
                          </tr>
                               ";
                          $count++;
