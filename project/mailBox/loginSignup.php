@@ -8,9 +8,9 @@ if (isset($_POST['login'])) {
      if (mysqli_num_rows($res) > 0) {
           $data = mysqli_fetch_assoc($res);
           $_SESSION['username'] = $username;
-          $_SESSION['from_id'] = $data['id'];
+          $_SESSION['user_id'] = $data['id'];
 
-          header('location:dashboard.php');
+          header('location:inbox.php');
      }
 }
 

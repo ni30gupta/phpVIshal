@@ -1,3 +1,3 @@
 <?php
-$con = mysqli_connect("localhost", "root", "", "mailbox");
+$con = mysqli_connect("localhost", "root", "root", "mailbox");
 session_start();
