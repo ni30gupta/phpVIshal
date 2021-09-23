@@ -1,11 +1,11 @@
 <?php
 include('top.php');
-if (!$_SESSION['user_id']) {
+if (!$_SESSION['is_login']) {
      header('location:loginSignup.php');
 }
 
-$from_id = $_SESSION['user_id'];
-$res = mysqli_query($con, "SELECT * from messages where from_id = '$from_id'");
+$from_id = $_SESSION['UID'];
+$res = mysqli_query($con, "SELECT * from messages where from_id = '$from_id' and status='active'");
 $count = 1;
 
 ?>
@@ -29,11 +29,13 @@ $count = 1;
                          <th scope="col">To</th>
                          <th scope="col">Subject</th>
                          <th scope="col">Message</th>
+                         <th scope="col">Action</th>
                     </tr>
                </thead>
                <tbody>
                     <?php
                     while ($rows = mysqli_fetch_assoc($res)) {
+                         $id = $rows['id'];
                          $getid = $rows['to_id'];
                          $data = mysqli_query($con, "SELECT name from users WHERE id = '$getid'");
                          $name = mysqli_fetch_assoc($data)['name'];
@@ -43,6 +45,8 @@ $count = 1;
                          <td>" . $name . "</td>
                          <td>" . $rows['subject'] . "</td>
                         <td>  <a   href='message.php'>" . $rows['message'] . " </a></td> </a>
+                        </td>
+                     <td> <a href='status.php/?id=$id'>Delete </a> </td>
                     </tr> 
                              ";
                          $count++;

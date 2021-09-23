@@ -1,12 +1,20 @@
 <?php
 include('top.php');
-if (!$_SESSION['user_id']) {
+include('function.php');
+if (!$_SESSION['is_login']) {
      header('location:loginSignup.php');
 }
 
-$from_id = $_SESSION['user_id'];
+
+// date_format($now,'y-m-d');
+
+
+$from_id = $_SESSION['UID'];
 $res = mysqli_query($con, "SELECT * from messages where to_id = '$from_id' and status ='active'");
 $count = 1;
+
+$uName = fetchData("SELECT name from users where id = '$from_id'");
+echo "Welcome " . strtoupper($uName[0]['name']);
 
 ?>
 
@@ -27,7 +35,7 @@ $count = 1;
                          <th scope="col">#</th>
                          <th scope="col">From</th>
                          <th scope="col">Subject</th>
-                         <th scope="col">Message</th>
+                         <!-- <th scope="col">Message</th> -->
                          <th scope="col">Action</th>
                     </tr>
                </thead>
@@ -35,22 +43,19 @@ $count = 1;
                     <?php
                     while ($rows = mysqli_fetch_assoc($res)) {
                          $id = $rows['id'];
-                         setcookie('status', 'unread', time() + 20);
-                         if (isset($_COOKIE['status'])) {
-                              if ($_COOKIE['status']) {
-                                   $status = $_COOKIE['status'];
-                              }
-                         }
                          $getid = $rows['from_id'];
+                         $readClass = "";
                          $data = mysqli_query($con, "SELECT name from users WHERE id = '$getid'");
                          $name = mysqli_fetch_assoc($data)['name'];
+                         if ($rows['is_read'] == '0') {
+                              $readClass = 'unread';
+                         }
                          echo "
                                <tr>
                          <th scope='row'>" . $count . " </th>
                          <td>" . $name . "</td>
-                         <td>" . $rows['subject'] . "</td>
-                         <td> <a id = '$count' class='$status' href='message.php?name= $name'> " . $rows['message'] . "</td>
-                     <td> <a href='status.php/?id=$id'>Delete </a> </td>
+                         <td> <a id='$id' class= " . $readClass . "   href = 'message.php?id=" . $id . "'> " . $rows['subject'] . " </a> </td>";
+                         echo "<td> <a href = 'javascript:void(0)' onclick = 'trashMsg(" . $id . ")' > Delete </a> </td>
                          </tr>
                               ";
                          $count++;
@@ -67,11 +72,17 @@ include('footer.php');
 ?>
 
 <style>
+     /* .read {
+          font-weight: 100;
+     } */
+
      .unread {
           font-weight: bolder;
      }
-
-     #2 {
-          font-weight: 100;
-     }
 </style>
+
+<script>
+     function trashMsg($id) {
+          alert($id);
+     }
+</script>

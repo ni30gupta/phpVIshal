@@ -1,11 +1,11 @@
 <?php
 include('top.php');
-if (!$_SESSION['user_id']) {
+if (!$_SESSION['is_login']) {
      header('location:loginSignup.php');
 }
 
 if (isset($_POST['submit'])) {
-     $from_id = $_SESSION['user_id'];
+     $from_id = $_SESSION['UID'];
      $subject = $_POST['subject'];
      $msg = $_POST['msg'];
      $to_user = $_POST['to_user'];
@@ -14,8 +14,9 @@ if (isset($_POST['submit'])) {
      // extracting to_id
      $row_id = mysqli_query($con, "SELECT id from users where username = '$to_user'");
      $to_id = mysqli_fetch_assoc($row_id)['id'];
+     $now = date('Y-m-d h:i:s');
 
-     mysqli_query($con, "INSERT INTO messages(from_id,to_id, subject, message) VALUES('$from_id','$to_id', '$subject', '$msg')");
+     mysqli_query($con, "INSERT INTO messages(from_id,to_id, subject, message, inserted_on, is_read) VALUES('$from_id','$to_id', '$subject', '$msg','$now','0')");
 }
 
 

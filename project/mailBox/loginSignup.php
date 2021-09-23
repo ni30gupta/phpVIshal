@@ -3,39 +3,24 @@ include('top.php');
 include('function.php');
 $query = "select * from users";
 
-prx(fetchData($query));
+echo "<h5 id='loginMsg' class='authMsg'></h5>";
 
+if (isset($_POST['login'])) {
+     $username  = $_POST['username'];
+     $password  = $_POST['password'];
+     $query = "SELECT * from users where username = '$username' and password = '$password'";
+     $data = fetchData($query);
+     if (isset($data[0])) {
+          $_SESSION['is_login'] = true;
+          $_SESSION['UID'] = $data[0]['id'];
+          header('location:inbox.php');
+     } else {
+          echo "<script> document.querySelector('#loginMsg').innerHTML = 'Login Failed'</script>";
+     }
+}
 
-
-
-// if (isset($_POST['login'])) {
-//      $username = $_POST['username'];
-//      $password = $_POST['password'];
-
-//      $res = mysqli_query($con, "SELECT * from users WHERE username='$username' and password='$password' ");
-//      if (mysqli_num_rows($res) > 0) {
-//           $data = mysqli_fetch_assoc($res);
-//           $_SESSION['username'] = $username;
-//           $_SESSION['user_id'] = $data['id'];
-
-//           header('location:inbox.php');
-//      }
-// }
-
-// if (isset($_POST['signup'])) {
-//      $username = $_POST['username'];
-//      $password = $_POST['password'];
-//      $name = $_POST['name'];
-
-//      $res = mysqli_query($con, "SELECT * from users WHERE username='$username' ");
-//      $time = time();
-//      if (mysqli_num_rows($res) == 0) {
-//           $res = mysqli_query($con, "INSERT INTO users(name,username, password, inserted_on) values('$name', '$username', '$password', '$time') ");
-//      } else {
-//           echo "UserName Already taken";
-//      }
-// }
 ?>
+
 <h1>Login</h1>
 <form id="frmLogin" method="post">
      <input type="text" name="username" autofocus placeholder="USERNAME"> <br> <br>
@@ -44,6 +29,7 @@ prx(fetchData($query));
 </form>
 
 <hr>
+<h5 id="signupMsg" class="authMsg"></h5>
 <h1>SignUp</h1>
 <form id="frmRegister" method="post">
      <input required type="text" name="name" placeholder="ENTER NAME"> <br> <br>
@@ -55,12 +41,19 @@ prx(fetchData($query));
 <script>
      $('#frmRegister').submit(function(e) {
           e.preventDefault();
+          $('#authMsg').html("")
           jQuery.ajax({
                url: 'manage.php',
                method: 'post',
                data: $('#frmRegister').serialize(),
                success: function(result) {
-                    console.log(result)
+                    let res = $.parseJSON(result);
+                    console.log(res)
+                    if (res.status === true) {
+                         window.location.href = "inbox.php";
+                    } else {
+                         $('#loginMsg').html(res.msg)
+                    }
                }
           });
      });
