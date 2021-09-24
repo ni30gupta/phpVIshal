@@ -32,10 +32,10 @@ echo "Welcome " . strtoupper($uName[0]['name']);
           <table class="table">
                <thead>
                     <tr>
+                         <th scope="col"> <input type='checkbox'></th>
                          <th scope="col">#</th>
                          <th scope="col">From</th>
                          <th scope="col">Subject</th>
-                         <!-- <th scope="col">Message</th> -->
                          <th scope="col">Action</th>
                     </tr>
                </thead>
@@ -51,8 +51,8 @@ echo "Welcome " . strtoupper($uName[0]['name']);
                               $readClass = 'unread';
                          }
                          echo "
-                               <tr>
-                         <th scope='row'>" . $count . " </th>
+                               <tr> 
+                         <th scope='row'> <input id = " . $id . " name = 'selected[]' onclick = 'selectMsg(" . $id . ")' type='checkbox'> " . $count . " </th>
                          <td>" . $name . "</td>
                          <td> <a id='$id' class= " . $readClass . "   href = 'message.php?id=" . $id . "'> " . $rows['subject'] . " </a> </td>";
                          echo "<td> <a href = 'javascript:void(0)' onclick = 'trashMsg(" . $id . ")' > Delete </a> </td>
@@ -71,18 +71,30 @@ echo "Welcome " . strtoupper($uName[0]['name']);
 include('footer.php');
 ?>
 
-<style>
-     /* .read {
-          font-weight: 100;
-     } */
-
-     .unread {
-          font-weight: bolder;
-     }
-</style>
+<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
 
 <script>
-     function trashMsg($id) {
-          alert($id);
+     function trashMsg(id) {
+          $.ajax({
+               url: 'delete.php',
+               method: 'post',
+               data: 'id=' + id,
+               success: function(result) {
+                    // console.log(result);
+
+               }
+          })
+     }
+
+     function selectMsg(id) {
+          let data = document.getElementsByName('selected')
+          console.log(data)
      }
 </script>
+
+<style>
+     .unread {
+          font-weight: bolder;
+          background-color: yellow;
+     }
+</style>
