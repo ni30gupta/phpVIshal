@@ -40,14 +40,16 @@ $count = 1;
                          $id = $rows['id'];
                          $data = mysqli_query($con, "SELECT name from users WHERE id = '$getid' ");
                          $name = mysqli_fetch_assoc($data)['name'];
-                         echo "
-                               <tr>
-                         <th scope='row'>" . $count . " </th>
-                         <td>" . $name . "</td>
-                         <td>" . $rows['subject'] . "</td>
-                         <td> <a href='status.php/?del_id=$id'>Delete </a> </td>
+                    ?>
+                         <tr>
+                              <th scope='row'> <?php $count ?> </th>
+                              <td> <?php echo $name ?> </td>
+                              <td><?php echo $rows['subject'] ?></td>
+                              <td> <a href="javascript:void(0)" onclick="restore(<?php echo $id ?>, 'restore')">Restore</a> </td>
+                              <td> <a href="javascript:void(0)" onclick="restore(<?php echo $id ?>, 'delete')">Delete</a> </td>
                          </tr>
-                              ";
+                    <?php
+
                          $count++;
                     }
                     ?>
@@ -60,6 +62,21 @@ $count = 1;
 <?php
 include('footer.php');
 ?>
+
+<script>
+     function restore(id, type) {
+          $.ajax({
+               url: 'delete.php',
+               method: 'post',
+               data: `id=${id}&type=${type}`,
+               success: function(result) {
+                    console.log(result)
+
+               }
+          })
+     }
+</script>
+
 
 <style>
      .unread {

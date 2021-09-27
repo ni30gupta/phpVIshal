@@ -32,8 +32,8 @@ echo "Welcome " . strtoupper($uName[0]['name']);
           <table class="table">
                <thead>
                     <tr>
-                         <th scope="col"> <input type='checkbox'></th>
-                         <th scope="col">#</th>
+                         <!-- <th scope="col"> </th> -->
+                         <th scope="col"> <input type='checkbox'> #</th>
                          <th scope="col">From</th>
                          <th scope="col">Subject</th>
                          <th scope="col">Action</th>
@@ -51,11 +51,11 @@ echo "Welcome " . strtoupper($uName[0]['name']);
                               $readClass = 'unread';
                          }
                          echo "
-                               <tr> 
+                               <tr id ='row" . $id . "' > 
                          <th scope='row'> <input id = " . $id . " name = 'selected[]' onclick = 'selectMsg(" . $id . ")' type='checkbox'> " . $count . " </th>
                          <td>" . $name . "</td>
                          <td> <a id='$id' class= " . $readClass . "   href = 'message.php?id=" . $id . "'> " . $rows['subject'] . " </a> </td>";
-                         echo "<td> <a href = 'javascript:void(0)' onclick = 'trashMsg(" . $id . ")' > Delete </a> </td>
+                         echo "<td> <a href = 'javascript:void(0)' onclick = 'trashMsg(" . $id . " )' > Delete </a> </td>
                          </tr>
                               ";
                          $count++;
@@ -74,13 +74,17 @@ include('footer.php');
 <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
 
 <script>
-     function trashMsg(id) {
+     function trashMsg(id, type) {
+          console.log("object")
           $.ajax({
                url: 'delete.php',
                method: 'post',
-               data: 'id=' + id,
+               data: `id=${id}&type=${type}`,
                success: function(result) {
-                    // console.log(result);
+                    result = $.parseJSON(result);
+                    if (result.status == 'Success') {
+                         $(`#row${id}`).remove()
+                    }
 
                }
           })
