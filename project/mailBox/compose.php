@@ -1,5 +1,6 @@
 <?php
 include('top.php');
+include('function.php');
 if (!$_SESSION['is_login']) {
      header('location:loginSignup.php');
 }
@@ -16,7 +17,11 @@ if (isset($_POST['submit'])) {
      $to_id = mysqli_fetch_assoc($row_id)['id'];
      $now = date('Y-m-d h:i:s');
 
-     mysqli_query($con, "INSERT INTO messages(from_id,to_id, subject, message, inserted_on, is_read) VALUES('$from_id','$to_id', '$subject', '$msg','$now','0')");
+     mysqli_query($con, "INSERT INTO messages(from_id,to_id, subject, message, inserted_on, is_read, sent_status) VALUES('$from_id','$to_id', '$subject', '$msg','$now','0','active')");
+     $msgID = mysqli_insert_id($con);
+     foreach ($_FILES['doc']['tmp_name'] as $key => $value) {
+          mysqli_query($con, "INSERT INTO message_img(msg_id,doc) VALUES('$msgID', '$value') ");
+     }
 }
 
 
@@ -37,32 +42,48 @@ $res = mysqli_query($con, "SELECT * from users ");
           </nav>
      </div>
      <div class="body col-lg-8">
-          <form method="POST"">
+          <form method="POST" enctype='multipart/form-data'>
                <div class=" form-group">
 
-               <div class="form-group">
-                    <label for="exampleFormControlSelect1">Write a New message</label>
-                    <select name="to_user" class="form-control" id="exampleFormControlSelect1">
-                         <?php
-                         while ($data = mysqli_fetch_assoc($res)) {
-                              echo "<option>" . $data['username'] . "</option> ";
-                         }
-                         ?>
+                    <div class="form-group">
+                         <label for="exampleFormControlSelect1">Write a New message</label>
+                         <select name="to_user" class="form-control" id="exampleFormControlSelect1">
+                              <?php
+                              while ($data = mysqli_fetch_assoc($res)) {
+                                   echo "<option>" . $data['username'] . "</option> ";
+                              }
+                              ?>
 
-                    </select>
+                         </select>
+                    </div>
+                    <input type="text" name="subject" class="form-control" id="exampleFormControlInput1" placeholder="Subject">
+
+
+                    <div class="form-group">
+                         <label for="exampleFormControlTextarea1">Example textarea</label>
+                         <textarea name="msg" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                    </div>
                </div>
-               <input type="text" name="subject" class="form-control" id="exampleFormControlInput1" placeholder="Subject">
-
-
-               <div class="form-group">
-                    <label for="exampleFormControlTextarea1">Example textarea</label>
-                    <textarea name="msg" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+               <div>
+                    <input name=doc[] type="file">
+                    <input type="button" onclick="AddRow()" value="Add">
                </div>
+               <input id="frm_submit" name="submit" type="submit">
+          </form>
      </div>
-     <input name="submit" type="submit">
-     </form>
 </div>
-</div>
+<script>
+     const RemoveRow = (id) => {
+          $(`#${id}`).remove()
+     }
+
+     id = 1
+
+     function AddRow() {
+          $('#frm_submit').before(`<div id=${id}><input name = doc[] type='file'/> <input type ='button' onclick='RemoveRow(${id})' value='Remove'/></div>`)
+          id++
+     }
+</script>
 
 <?php
 include('footer.php');

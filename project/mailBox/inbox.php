@@ -10,7 +10,7 @@ if (!$_SESSION['is_login']) {
 
 
 $from_id = $_SESSION['UID'];
-$res = mysqli_query($con, "SELECT * from messages where to_id = '$from_id' and status ='active'");
+$res = mysqli_query($con, "SELECT * from messages where to_id = '$from_id' and inbox_status ='active'");
 $count = 1;
 
 $uName = fetchData("SELECT name from users where id = '$from_id'");
@@ -36,7 +36,7 @@ echo "Welcome " . strtoupper($uName[0]['name']);
                          <th scope="col"> <input type='checkbox'> #</th>
                          <th scope="col">From</th>
                          <th scope="col">Subject</th>
-                         <th scope="col">Action</th>
+                         <th scope="col"><a href="javascript:void(0)">Delete</a></th>
                     </tr>
                </thead>
                <tbody>
@@ -74,7 +74,7 @@ include('footer.php');
 <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
 
 <script>
-     function trashMsg(id, type) {
+     function trashMsg(id, type = 'inbox') {
           console.log("object")
           $.ajax({
                url: 'delete.php',

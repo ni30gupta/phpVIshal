@@ -4,8 +4,8 @@ if (!$_SESSION['is_login']) {
      header('location:loginSignup.php');
 }
 
-$from_id = $_SESSION['UID'];
-$res = mysqli_query($con, "SELECT * from messages where to_id = '$from_id' and status ='inactive'");
+$user_id = $_SESSION['UID'];
+$res = mysqli_query($con, "SELECT * from messages where (to_id=$user_id and inbox_status ='inactive' ) or (from_id=$user_id and sent_status ='inactive') ");
 $count = 1;
 
 ?>
@@ -41,12 +41,12 @@ $count = 1;
                          $data = mysqli_query($con, "SELECT name from users WHERE id = '$getid' ");
                          $name = mysqli_fetch_assoc($data)['name'];
                     ?>
-                         <tr>
+                         <tr id='<?php echo "row$id" ?>'>
                               <th scope='row'> <?php $count ?> </th>
                               <td> <?php echo $name ?> </td>
                               <td><?php echo $rows['subject'] ?></td>
-                              <td> <a href="javascript:void(0)" onclick="restore(<?php echo $id ?>, 'restore')">Restore</a> </td>
-                              <td> <a href="javascript:void(0)" onclick="restore(<?php echo $id ?>, 'delete')">Delete</a> </td>
+                              <td> <a href="javascript:void(0)" onclick="restore(<?php echo $id; ?>, 'restore')">Restore</a> </td>
+                              <td> <a href="javascript:void(0)" onclick="restore(<?php echo $id; ?>, 'delete')">Delete</a> </td>
                          </tr>
                     <?php
 
@@ -70,7 +70,11 @@ include('footer.php');
                method: 'post',
                data: `id=${id}&type=${type}`,
                success: function(result) {
-                    console.log(result)
+                    result = $.parseJSON(result);
+                    if (result.status == 'Success') {
+                         $(`#row${id}`).remove();
+                         console.log(`#row${id}`)
+                    }
 
                }
           })
