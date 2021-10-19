@@ -8,13 +8,31 @@ echo "<h5 id='loginMsg' class='authMsg'></h5>";
 if (isset($_POST['login'])) {
      $username  = $_POST['username'];
      $password  = $_POST['password'];
-     $query = "SELECT * from users where username = '$username' and password = '$password'";
+
+
+     $query = "SELECT * from users where username = '$username' ";
      $data = fetchData($query);
-     if (isset($data[0])) {
+
+     $last_attempt = date("H:i:s", $data[0]['last_attempt']);
+     $current_time = time();
+     $shouldLogin = true;
+     $id = $data[0]['id'];
+     $total_attempt = $data[0]['total_attempt'];
+     echo $total_attempt;
+     // die();
+
+     if ($total_attempt > 3) {
+          echo "Total attempt exceeded, last attempt made on" . $data['last_attempt'];
+          $shouldLogin = false;
+     } else if (isset($data[0]) && $shouldLogin) {
           $_SESSION['is_login'] = true;
-          $_SESSION['UID'] = $data[0]['id'];
+          $_SESSION['UID'] = $id;
+          mysqli_query($con, "UPDATE users SET last_attempt = '$current_time' , total_attempt = '0' WHERE id = '$id'");
           header('location:inbox.php');
      } else {
+          $total_attempt = $total_attempt + 1;
+          mysqli_query($con, "UPDATE users SET last_attempt = '$current_time' , total_attempt = '$total_attempt' WHERE id = '$id'");
+
           echo "<script> document.querySelector('#loginMsg').innerHTML = 'Login Failed'</script>";
      }
 }

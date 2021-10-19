@@ -1,4 +1,5 @@
 <?php
+include('smtp/PHPMailerAutoload.php');
 $con = mysqli_connect("localhost", "root", "root", "mailbox");
 
 
@@ -30,4 +31,35 @@ function getName($id)
           $name = $rows['name'];
      }
      return $name;
+}
+
+
+
+function mailShoot($subject, $msg, $email)
+{
+     $mail = new PHPMailer();
+     $mail->isSMTP();
+     $mail->SMTPAuth = true;
+     $mail->SMTPSecure = 'tls';
+     $mail->Host = 'smtp.gmail.com';
+     $mail->Port = '587';
+     $mail->isHTML(true);
+     $mail->CharSet = 'UTF-8';
+     $mail->Username = 'ledbulbrepair@gmail.com';
+     $mail->Password = 'Ni30@1993tiri';
+     $mail->setFrom('ledbulbrepair@gmail.com', 'Php_Class');
+     $mail->Subject = $subject;
+     $mail->Body = $msg;
+     $mail->addAddress($email);
+     $mail->SMTPOptions = array('ssl' => array(
+          'verify_peer' => false,
+          'verify_peer_name' => false,
+          'allow_self_signed' => false
+     ));
+
+     if (!$mail->Send()) {
+          echo $mail->ErrorInfo;
+     } else {
+          echo "Mail Sent";
+     }
 }
